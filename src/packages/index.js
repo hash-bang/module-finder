@@ -22,18 +22,14 @@ function getPackages(paths, opts) {
   opts = opts || {};
   return reduce(function (result, path) {
     return new Promise(function (resolve, reject) {
-      var error;
       readdirp({root: path, depth: opts.recursive ? null : 1, fileFilter: 'package.json'})
         .on('data', function (d) {
           result.push(d.fullPath);
         })
         .on('error', function (err) {
-          error = err;
+	  reject(err);
         })
         .on('end', function () {
-          if (error && error.code !== 'ENOENT') {
-            return reject(error);
-          }
           resolve(result);
         });
     });
